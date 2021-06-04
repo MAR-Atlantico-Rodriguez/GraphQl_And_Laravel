@@ -3,39 +3,12 @@ import gql from "graphql-tag";
 import {Apollo} from 'apollo-angular';
 
 
-const ADDCALENDAR = gql`
-    mutation createEventCalendar(
-        $patient_id: ID!,
-        $state_id: ID!,
-        $user_consulting_room_id: ID!
-        $date_time_in: DateTime!,
-        $date_time_out: DateTime!,
-        $description: String,
-        $price: String!,
-        $event: Int){
-        createEventCalendar(input:{
-            patient_id: $patient_id,
-            state_id: $state_id,
-            user_consulting_room_id: $user_consulting_room_id,
-            date_time_in: $date_time_in,
-            date_time_out: $date_time_out,
-            description: $description,
-            price: $price,
-            event: $event,
-        }){
-            id
-        }
-    }`;
 
-
-const CHEANGEEVENT = gql`
-mutation changeEventTime($id: ID!, $start: DateTime!, $end: DateTime!){
-    changeEventTime(input:{
-        id: $id
-        date_time_in: $start
-        date_time_out: $end
-    }){
+const ADDUSER = gql`
+mutation createUser($name: String!, $email: String!, $password: String!){
+      createUser(input:{name: $name, email: $email, password: $password}){
         id
+        name
     }
 }`;
 
@@ -50,41 +23,35 @@ export class AppComponent implements OnInit{
   constructor(private apollo: Apollo) {}
 
   ngOnInit(): void {
-    this.apollo
-      .subscribe({
+    this.apollo.subscribe({
         query: gql`
-          subscription ShiftCaledar($id:ID){
-            shiftCalendar(id:$id){
+          subscription userCreated{
+            userCreated{
               id
-              date_time_in
+              name
             }
           }
         `,
       })
       .subscribe((data:any)  => {
         console.log(data); // { id: 2, title: "New title" }
-        this.items = data.data.shiftCalendar;
+        this.items = data;
       },
       (error) => {console.log(error)});
   }
 
   save(){
-    console.log('ok');
+    //console.log('ok');
 
     this.apollo.mutate({
-      mutation: CHEANGEEVENT,
+      mutation: ADDUSER,
       variables: {
-            // patient_id:"8b250ee7-ffa6-46fa-ab87-8a880414d315",
-            // state_id:"8b3b2716-b3d9-11ea-b976-d4bed93e8b2b",
-            // user_consulting_room_id:"e89396d1-d4c0-11ea-a02e-d4bed93e8b2b",
-            id: "2f8a3798-be53-11ea-8a4e-d4bed93e8b2b",
-            start:"2021-05-19 09:45:00",
-            end:"2021-05-19 10:00:00",
-            // description:"123123123333",
-            // price:"1000",
-            // event:1
+            name:"Martin Rodriguez",
+            email: "martin1@martin.com",
+            password: "1231231"
       }
-    }).subscribe();
+    }).subscribe(data =>{console.log(data);}, 
+                 error => console.log(error));
 
     // this.apollo.mutate({
     //   mutation: CHEANGEEVENT,
