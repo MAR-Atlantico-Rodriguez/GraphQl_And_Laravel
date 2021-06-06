@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import gql from "graphql-tag";
 import {Apollo} from 'apollo-angular';
-
+import Echo from "laravel-echo";
 
 
 const ADDUSER = gql`
@@ -9,9 +9,9 @@ mutation createUser($name: String!, $email: String!, $password: String!){
       createUser(input:{name: $name, email: $email, password: $password}){
         id
         name
+        email
     }
 }`;
-
 
 @Component({
   selector: 'app-root',
@@ -50,8 +50,7 @@ export class AppComponent implements OnInit{
             email: "martin1@martin.com",
             password: "1231231"
       }
-    }).subscribe(data =>{console.log(data);}, 
-                 error => console.log(error));
+    }).subscribe();
 
     // this.apollo.mutate({
     //   mutation: CHEANGEEVENT,
